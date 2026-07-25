@@ -1,0 +1,240 @@
+name: 🐛 Priceline H1 Recon — Every 10 Hours
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */10 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: recon-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Comma-separated root domains of the Priceline H1 scope.
+  # Override via a TARGETS repo secret if the scope changes.
+  TARGETS: ${{ secrets.TARGETS || 'priceline.com,getaroom.com,flyiin.com,bookingholdings.com,bookingholdings-coe.com' }}
+  # Your HackerOne username — Priceline REQUIRES the X-Bug-Bounty header
+  # on active requests or their WAF blocks you.
+  H1_USER: ${{ secrets.H1_USERNAME || 'xiro0x_1' }}
+  OUTPUT_DIR: ./results
+
+jobs:
+  recon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: false
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 💾 Cache Tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/bin
+            ~/nuclei-templates
+          key: ${{ runner.os }}-recon-v7
+          restore-keys: |
+            ${{ runner.os }}-recon-
+
+      - name: 📦 Install System Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq git curl wget jq dnsrecon whatweb wafw00f unzip dirb
+
+      - name: 🔧 Install Go Tools
+        run: |
+          mkdir -p ~/go/bin
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/go/bin:$PATH"
+
+          gi() {
+            command -v "$1" >/dev/null 2>&1 && { echo "cached: $1"; return 0; }
+            echo "installing: $1"
+            go install "$2" || echo "FAILED (non-fatal): $1"
+          }
+
+          gi subfinder  github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+          gi assetfinder github.com/tomnomnom/assetfinder@latest
+          gi waybackurls github.com/tomnomnom/waybackurls@latest
+          gi httpx      github.com/projectdiscovery/httpx/cmd/httpx@latest
+          gi gau        github.com/lc/gau/v2/cmd/gau@latest
+          gi katana     github.com/projectdiscovery/katana/cmd/katana@latest
+          gi ffuf       github.com/ffuf/ffuf/v2@latest
+          gi gf         github.com/tomnomnom/gf@latest
+          gi subjs      github.com/lc/subjs@latest
+          gi nuclei     github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+
+          # findomain is RUST — go install can never work; use the prebuilt binary
+          if ! command -v findomain >/dev/null 2>&1; then
+            curl -sL --max-time 120 \
+              https://github.com/findomain/findomain/releases/latest/download/findomain-linux.zip \
+              -o /tmp/findomain.zip || true
+            if [ -s /tmp/findomain.zip ]; then
+              unzip -o /tmp/findomain.zip -d /tmp/findomain-bin >/dev/null 2>&1 || true
+              install -m 0755 /tmp/findomain-bin/findomain ~/go/bin/findomain 2>/dev/null || true
+            fi
+          fi
+
+          timeout 300 nuclei -update-templates 2>/dev/null || true
+
+          echo "=== TOOLS INSTALLED ==="
+          ls -la ~/go/bin/ || true
+
+      - name: 🐍 Install Python Tools
+        run: |
+          pip3 install -q --upgrade pip || true
+          pip3 install -q theHarvester || true
+
+      - name: 🔑 Setup API Keys
+        run: |
+          mkdir -p ~/.config/subfinder
+          cat > ~/.config/subfinder/provider-config.yaml << 'EOF'
+          censys: ["${{ secrets.CENSYS_API_KEY }}"]
+          chaos: ["${{ secrets.CHAOS_API_KEY }}"]
+          shodan: ["${{ secrets.SHODAN_API_KEY }}"]
+          virustotal: ["${{ secrets.VIRUSTOTAL_API_KEY }}"]
+          EOF
+
+      # Verify the webhook BEFORE the long run
+      - name: 🔔 Test Discord Webhook
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "❌❌ DISCORD_WEBHOOK_URL secret is EMPTY!"
+            exit 0
+          fi
+          echo "Webhook secret present (length: ${#WEBHOOK} chars)"
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+            -H "Content-Type: application/json" \
+            -d "{\"content\": \"🚀 Priceline H1 Recon **started** — run #${{ github.run_number }}\nTargets: \`$TARGETS\`\"}" \
+            "$WEBHOOK")
+          echo "Discord test HTTP code: $code"
+          if [ "$code" != "200" ] && [ "$code" != "204" ]; then
+            echo "❌ Webhook rejected (HTTP $code) — it is invalid or was deleted. ROTATE it!"
+          else
+            echo "✅ Webhook works — check Discord for the '🚀 started' message"
+          fi
+
+      - name: 🚀 Run Recon
+        env:
+          BUG_BOUNTY_HEADER: ${{ secrets.H1_USERNAME || 'xiro0x_1' }}
+        run: |
+          export PATH="$HOME/go/bin:$PATH"
+          mkdir -p "$OUTPUT_DIR"
+
+          echo "=== REPO FILES (diagnostic) ==="
+          ls -la
+          echo "TARGETS = [$TARGETS]"
+          echo "BUG_BOUNTY_HEADER = [$BUG_BOUNTY_HEADER]"
+
+          echo "=== TOOL CHECK ==="
+          for t in subfinder assetfinder findomain waybackurls gau httpx katana ffuf gf subjs nuclei wafw00f jq theHarvester; do
+            command -v "$t" >/dev/null 2>&1 && echo "OK   $t" || echo "MISS $t"
+          done
+
+          if [ ! -s recon.sh ]; then
+            echo "❌❌ recon.sh is MISSING or EMPTY in the repository root!"
+            ls -la
+            cat > "$OUTPUT_DIR/FINAL_REPORT.txt" << EOF
+          RECON FAILED ❌
+          recon.sh was not found (or is empty) in the repository root.
+          Targets: $TARGETS
+          Fix: file must be named exactly "recon.sh" in the repo ROOT
+          (NOT inside .github/), next to notify.py.
+          EOF
+            exit 1
+          fi
+          echo "recon.sh present: $(wc -l < recon.sh) lines"
+
+          WORDLIST=/usr/share/dirb/wordlists/common.txt
+          if [ ! -f "$WORDLIST" ]; then
+            curl -sL --max-time 60 \
+              https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt \
+              -o /tmp/common.txt || true
+            [ -s /tmp/common.txt ] && WORDLIST=/tmp/common.txt
+          fi
+          echo "Wordlist: $WORDLIST ($(wc -l < "$WORDLIST" 2>/dev/null || echo 0) words)"
+
+          chmod +x recon.sh || true
+          bash ./recon.sh "$TARGETS" "$OUTPUT_DIR" "$WORDLIST" 2>&1 | tee recon.log
+          echo "recon_exit_code=${PIPESTATUS[0]}"
+        continue-on-error: true
+
+      - name: 📊 Summary in GitHub UI
+        if: always()
+        run: |
+          if [ -f "$OUTPUT_DIR/FINAL_REPORT.txt" ]; then
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat "$OUTPUT_DIR/FINAL_REPORT.txt" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No report generated" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: 📤 Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: priceline-recon-${{ github.run_number }}
+          path: |
+            ./results/
+            ./recon.log
+            ./last_subs.txt
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: 🔔 Discord Notify
+        if: always()
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          echo "notify.py exists: $([ -f notify.py ] && echo yes || echo NO)"
+          echo "webhook length: ${#WEBHOOK}"
+          ls -la "$OUTPUT_DIR" 2>/dev/null || echo "(no results dir)"
+          if [ -f notify.py ] && [ -n "$WEBHOOK" ]; then
+            python3 notify.py \
+              --webhook "$WEBHOOK" \
+              --target "Priceline H1" \
+              --output "$OUTPUT_DIR" \
+              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              --status "${{ job.status }}" \
+              --report "$OUTPUT_DIR/FINAL_REPORT.txt" \
+              2>&1 | tee notify.log || echo "Discord notify failed but continuing"
+          else
+            echo "❌ SKIPPED: notify.py missing or DISCORD_WEBHOOK_URL empty"
+          fi
+
+      - name: 💾 Save State
+        if: always()
+        run: |
+          if [ -f "$OUTPUT_DIR/02_subdomains/ALL_SUBDOMAINS.txt" ]; then
+            cp "$OUTPUT_DIR/02_subdomains/ALL_SUBDOMAINS.txt" last_subs.txt
+          else
+            touch last_subs.txt
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add last_subs.txt || true
+          if ! git diff --staged --quiet 2>/dev/null; then
+            git commit -m "🤖 Update recon state [skip ci]" || true
+            git pull --rebase origin "${{ github.ref_name }}" 2>/dev/null || true
+            git push origin HEAD 2>/dev/null || true
+          else
+            echo "No state changes"
+          fi
