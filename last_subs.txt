@@ -8089,7 +8089,6 @@ sales-ccp.priceline.com
 sandbox.ids.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
-sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
