@@ -7708,6 +7708,7 @@ dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
+demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
@@ -7989,6 +7990,7 @@ ocn.flyiin.com
 offers.priceline.com
 officeweb.corp.priceline.com
 okta.qad.priceline.com
+old-availability.ec2-us-east1.getaroom.com
 orange.priceline.com
 origin-img1.priceline.com
 origin.bookingholdings-coe.com
@@ -8089,6 +8091,7 @@ sales-ccp.priceline.com
 sandbox.ids.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
+sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
