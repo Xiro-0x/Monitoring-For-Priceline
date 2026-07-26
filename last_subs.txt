@@ -1,11 +1,5 @@
 119.41-240.priceline.com
 1psb.priceline.com
-2525252525252fir.bookingholdings.com
-25252525252fir.bookingholdings.com
-252525252fir.bookingholdings.com
-2525252fir.bookingholdings.com
-25252fir.bookingholdings.com
-252fir.bookingholdings.com
 2fwww.priceline.com
 5l6swdqe1ly.priceline.com
 63-238-98-146.dia.static.qwest.net1-174.priceline.com
@@ -7662,6 +7656,7 @@ availability.ec2-us-east1.getaroom.com
 availability.getaroom.com
 aws.getaroom.com
 aws.ifnyop.priceline.com
+azure.bookingholdings.com
 b1.dev.priceline.com
 bar-card-app-res-enc-test.priceline.com
 bar-card-app-res-enc.priceline.com
@@ -7708,12 +7703,11 @@ dac.corp.priceline.com
 dalvirus01.corp.getaroom.com
 dashboard_test.corp.priceline.com
 dashboardtest.corp.priceline.com
+data.bookingholdings.com
 dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
-debrepo.ops.getaroom.com
-demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
@@ -7742,6 +7736,7 @@ does-no-exist33.flyiin.com
 dohop.europewest1.flyiin.com
 dohop.flyiin.com
 dohop2.flyiin.com
+downloads.bookingholdings.com
 drloubalzzs.priceline.com
 e.getaroom.com
 e78fa0e4b889e8a792e68a80e69cafe6b299e9be992011e5b9b42e69c88e5b9.flyiin.com
@@ -7763,6 +7758,7 @@ ews.corp.priceline.com
 ews.priceline.com
 experiences.priceline.com
 external.bookingholdings-coe.com
+external.bookingholdings.com
 external.priceline.com
 extranet-production-ec2-us-east-1.getaroom.com
 extranet-utility.getaroom.com
@@ -7787,6 +7783,7 @@ flyiin.com
 flyiin.europewest1.flyiin.com
 flyiin.flyiin.com
 forklift-mysql-master.getaroom.com
+forum.bookingholdings.com
 forum.links.priceline.com
 forward.flyiin.com
 fs.corp.priceline.com
@@ -7860,8 +7857,8 @@ inspector-api-hub-prod.flyiin.com
 inspector-api-hub.flyiin.com
 inspector.flyiin.com
 int.bookingholdings-coe.com
+int.bookingholdings.com
 int.news.getaroom.com
-int.www.getaroom.com
 internal.cruises.priceline.com
 internal.deva.priceline.com
 internal.qaa.priceline.com
@@ -7872,6 +7869,7 @@ ir.bookingholdings.com
 ir.priceline.com
 itsupport.corp.priceline.com
 iwww.priceline.com
+jenkins.bookingholdings.com
 jenkins.getaroom.com
 jira.corp.priceline.com
 jira2.corp.priceline.com
@@ -7891,6 +7889,7 @@ localdealsemail.priceline.com
 log-relay.qa-pcln-static.priceline.com
 log-relay.qad.priceline.com
 log.qa-pcln-static.priceline.com
+login.bookingholdings.com
 login.cruises.priceline.com
 m.getaroom.com
 m.h.priceline.com
@@ -7928,6 +7927,7 @@ msim.qa-priceline.flyiin.com
 msmtp.priceline.com
 mss.qa.priceline.com
 mta.emails.priceline.com
+mx.bookingholdings.com
 ndc-gateway.flyiin.com
 ndc-man.flyiin.com
 net.vip.getaroom.com
@@ -7989,10 +7989,10 @@ ocn.flyiin.com
 offers.priceline.com
 officeweb.corp.priceline.com
 okta.qad.priceline.com
-old-availability.ec2-us-east1.getaroom.com
 orange.priceline.com
 origin-img1.priceline.com
 origin.bookingholdings-coe.com
+origin.bookingholdings.com
 owa.corp.priceline.com
 owa.cruises.priceline.com
 owa.links.priceline.com
@@ -8024,6 +8024,7 @@ picme.priceline.com
 pkg-whitelabel.priceline.com
 po.flyiin.com
 poc.priceline.com
+portal.bookingholdings.com
 pp.priceline.com
 pps.priceline.com
 praetorian.flyiin.com
@@ -8088,6 +8089,7 @@ sales-ccp.priceline.com
 sandbox.ids.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
+sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
@@ -8109,6 +8111,7 @@ squid.flyiin.com
 ssh.corp.priceline.com
 staging.pps.priceline.com
 staging.priceline.com
+static.bookingholdings.com
 static.flyiin.com
 stats.ids.priceline.com
 stats.links.priceline.com
@@ -8179,6 +8182,7 @@ wildcard.qab.priceline.com
 wiremock.priceline.com
 wl.priceline.com
 ww1.h.priceline.com
+ww2.bookingholdings.com
 www-eks.getaroom.com
 www-elb.getaroom.com
 www-production-ec2-us-east-1.getaroom.com
@@ -8220,7 +8224,6 @@ www.sb.priceline.com
 www.staging.getaroom.com
 www.suppliermon.corp.getaroom.com
 www.trvl.priceline.com
-www.web1.getaroom.com
 wwwcdn.priceline.com
 x.flyiin.com
 xml.qac.priceline.com
