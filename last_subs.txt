@@ -1,12 +1,6 @@
 119.41-240.priceline.com
 13644936.travel.priceline.com
 1psb.priceline.com
-2525252525252fir.bookingholdings.com
-25252525252fir.bookingholdings.com
-252525252fir.bookingholdings.com
-2525252fir.bookingholdings.com
-25252fir.bookingholdings.com
-252fir.bookingholdings.com
 2fwww.priceline.com
 5l6swdqe1ly.priceline.com
 63-238-98-146.dia.static.qwest.net1-174.priceline.com
@@ -8096,7 +8090,6 @@ sales-ccp.priceline.com
 sandbox.ids.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
-sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
