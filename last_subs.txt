@@ -7665,7 +7665,6 @@ barclayspricepoints.dqs.priceline.com
 barclayspricepoints.priceline.com
 barclaysshortenedapp.priceline.com
 barclaysshortenedapp.qa.priceline.com
-beta.bookingholdings-coe.com
 beta.links.priceline.com
 billing.getaroom.com
 bitbucket.corp.priceline.com
@@ -7709,6 +7708,7 @@ dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
+demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
@@ -7758,7 +7758,6 @@ europewest1.flyiin.com
 ews.corp.priceline.com
 ews.priceline.com
 experiences.priceline.com
-external.bookingholdings-coe.com
 external.bookingholdings.com
 external.priceline.com
 extranet-production-ec2-us-east-1.getaroom.com
@@ -7857,7 +7856,6 @@ info.priceline.com
 inspector-api-hub-prod.flyiin.com
 inspector-api-hub.flyiin.com
 inspector.flyiin.com
-int.bookingholdings-coe.com
 int.bookingholdings.com
 int.news.getaroom.com
 internal.cruises.priceline.com
@@ -7904,7 +7902,6 @@ mail.cruises.priceline.com
 mail.getaroom.com
 mail.priceline.com
 mail1.priceline.com
-mail2.bookingholdings-coe.com
 mail2.cruises.priceline.com
 mail2.links.priceline.com
 mail2.priceline.com
@@ -7992,7 +7989,6 @@ officeweb.corp.priceline.com
 okta.qad.priceline.com
 orange.priceline.com
 origin-img1.priceline.com
-origin.bookingholdings-coe.com
 origin.bookingholdings.com
 owa.corp.priceline.com
 owa.cruises.priceline.com
@@ -8096,7 +8092,6 @@ search-integration1.getaroom.com
 search-preprod.getaroom.com
 search.getaroom.com
 search.integration1.getaroom.com
-secure.bookingholdings-coe.com
 secure.priceline.com
 secure.trvl.priceline.com
 sendgrid.net.vip.getaroom.com
@@ -8134,7 +8129,6 @@ supply.web3.getaroom.com
 syslog.priceline.com
 tableauanalysis.priceline.com
 tag-mgmt-qaa.priceline.com
-test.bookingholdings-coe.com
 test.h.priceline.com
 test.links.priceline.com
 tickets.a1.qa.priceline.com
