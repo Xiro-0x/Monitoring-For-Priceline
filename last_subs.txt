@@ -1,5 +1,4 @@
 119.41-240.priceline.com
-13644936.travel.priceline.com
 1psb.priceline.com
 2fwww.priceline.com
 5l6swdqe1ly.priceline.com
@@ -7577,6 +7576,7 @@
 64-6-31-99.priceline.com
 69-195-35-1.priceline.com
 69-195-35-254.priceline.com
+_dmarc.bookingholdings-coe.com
 a1.dev.priceline.com
 a1.qa.priceline.com
 a10.dev.priceline.com
@@ -7709,7 +7709,6 @@ dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
-demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
@@ -8103,6 +8102,7 @@ secure.trvl.priceline.com
 sendgrid.net.vip.getaroom.com
 seti.qad.priceline.com
 setiadmin.corp.priceline.com
+sg.trvl.priceline.com
 sgsmtp.getaroom.com
 sli.priceline.com
 smtp.getaroom.com
