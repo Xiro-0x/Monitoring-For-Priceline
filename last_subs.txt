@@ -1,6 +1,12 @@
 119.41-240.priceline.com
 13644936.travel.priceline.com
 1psb.priceline.com
+2525252525252fir.bookingholdings.com
+25252525252fir.bookingholdings.com
+252525252fir.bookingholdings.com
+2525252fir.bookingholdings.com
+25252fir.bookingholdings.com
+252fir.bookingholdings.com
 2fwww.priceline.com
 5l6swdqe1ly.priceline.com
 63-238-98-146.dia.static.qwest.net1-174.priceline.com
@@ -7577,6 +7583,8 @@
 64-6-31-99.priceline.com
 69-195-35-1.priceline.com
 69-195-35-254.priceline.com
+_dmarc.bookingholdings-coe.com
+_dmarc.bookingholdings.com
 a1.dev.priceline.com
 a1.qa.priceline.com
 a10.dev.priceline.com
@@ -7695,6 +7703,7 @@ data.bookingholdings.com
 dataservicesqaa.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
+demo.flyiin.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
 dev.flyiin.com
@@ -7843,6 +7852,7 @@ ir.priceline.com
 itsupport.corp.priceline.com
 iwww.priceline.com
 jenkins.bookingholdings.com
+jenkins.getaroom.com
 jira.corp.priceline.com
 jira2.corp.priceline.com
 jobs.bookingholdings-coe.com
@@ -7952,7 +7962,6 @@ ocn.flyiin.com
 offers.priceline.com
 officeweb.corp.priceline.com
 okta.qad.priceline.com
-old-availability.ec2-us-east1.getaroom.com
 orange.priceline.com
 origin-img1.priceline.com
 origin.bookingholdings-coe.com
@@ -8046,6 +8055,7 @@ s2pclncdn.qac.priceline.com
 sales-ccp.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
+sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
@@ -8069,9 +8079,11 @@ staging.pps.priceline.com
 staging.priceline.com
 static.bookingholdings.com
 static.flyiin.com
+status.getaroom.com
 stay-availability-grpc-sandbox.production.getaroom.com
 stg-test.flyiin.com
 stockroom.getaroom.com
+storage.getaroom.com
 storefront.corp.priceline.com
 supplier-relations.pm.getaroom.com
 suppliermon.corp.getaroom.com
