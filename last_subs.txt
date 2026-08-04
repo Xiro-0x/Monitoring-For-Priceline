@@ -7715,6 +7715,7 @@ dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
+debrepo.ops.getaroom.com
 demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
@@ -7867,6 +7868,7 @@ inspector.flyiin.com
 int.bookingholdings-coe.com
 int.bookingholdings.com
 int.news.getaroom.com
+int.www.getaroom.com
 internal.cruises.priceline.com
 internal.deva.priceline.com
 internal.qaa.priceline.com
@@ -8098,7 +8100,6 @@ sales-ccp.priceline.com
 sandbox.ids.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
-sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
@@ -8233,6 +8234,7 @@ www.sb.priceline.com
 www.staging.getaroom.com
 www.suppliermon.corp.getaroom.com
 www.trvl.priceline.com
+www.web1.getaroom.com
 wwwcdn.priceline.com
 x.flyiin.com
 xml.qac.priceline.com
