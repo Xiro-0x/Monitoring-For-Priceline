@@ -7709,7 +7709,6 @@ dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
-demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
@@ -7728,9 +7727,6 @@ dns1.links.priceline.com
 dns2.links.priceline.com
 docs.corp.priceline.com
 docs.dohop.flyiin.com
-docs.flyiin-prod.europewest1.flyiin.com
-docs.flyiin-prod.flyiin.com
-docs.flyiin.europewest1.flyiin.com
 docs.flyiin.flyiin.com
 docs.h.priceline.com
 docs.praetorian.flyiin.com
@@ -7924,8 +7920,6 @@ mfa.corp.priceline.com
 mobileimg.priceline.com
 monitor.flyiin.com
 msim.dohop.flyiin.com
-msim.flyiin-prod.flyiin.com
-msim.flyiin.europewest1.flyiin.com
 msim.flyiin.flyiin.com
 msim.praetorian.flyiin.com
 msim.priceline.flyiin.com
@@ -8108,7 +8102,6 @@ secure.trvl.priceline.com
 sendgrid.net.vip.getaroom.com
 seti.qad.priceline.com
 setiadmin.corp.priceline.com
-sg.flyiin.com
 sgsmtp.getaroom.com
 sli.priceline.com
 smtp.getaroom.com
