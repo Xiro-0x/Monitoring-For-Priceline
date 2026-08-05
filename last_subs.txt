@@ -7577,7 +7577,6 @@
 64-6-31-99.priceline.com
 69-195-35-1.priceline.com
 69-195-35-254.priceline.com
-_dmarc.bookingholdings.com
 a1.dev.priceline.com
 a1.qa.priceline.com
 a10.dev.priceline.com
@@ -7710,7 +7709,6 @@ dataservicesqaa.priceline.com
 db.links.priceline.com
 dealreveal.corp.priceline.com
 deals.priceline.com
-demo.flyiin.com
 demo.links.priceline.com
 dev-web.priceline.com
 dev.customerservice-ccp.priceline.com
