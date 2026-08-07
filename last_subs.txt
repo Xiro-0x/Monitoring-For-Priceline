@@ -7644,7 +7644,6 @@ ash1-imsva-405.dmz.priceline.com
 ash1-in.corp.priceline.com
 ash1-smtp-dmz01.dmz.priceline.com
 ash1-smtp-dmz02.dmz.priceline.com
-assets.flyiin.com
 assets.qad.priceline.com
 auth.flyiin.com
 auto.priceline.com
@@ -7687,7 +7686,6 @@ c1pclncdn.qaa.priceline.com
 canva.priceline.com
 careers.priceline.com
 casper.corp.priceline.com
-cdn.flyiin.com
 cdn.links.priceline.com
 chat.links.priceline.com
 chat.priceline.com
@@ -7722,7 +7720,6 @@ dmz.priceline.com
 dns-att-dmz.dmz.priceline.com
 dns-ex-dmz.dmz.priceline.com
 dns-nw-dmz.dmz.priceline.com
-dns.flyiin.com
 dns1.links.priceline.com
 dns2.links.priceline.com
 docs.corp.priceline.com
@@ -7884,7 +7881,6 @@ kibana.useast4.flyiin.com
 kubernetes.links.priceline.com
 li.priceline.com
 links.priceline.com
-live.flyiin.com
 localdeals.priceline.com
 localdealsemail.priceline.com
 log-relay.qa-pcln-static.priceline.com
@@ -7913,12 +7909,10 @@ mailrelay.flyiin.com
 marketplace.flyiin.com
 mcp-qaa.priceline.com
 mcp.priceline.com
-media.flyiin.com
 media.priceline.com
 meet.priceline.com
 mfa.corp.priceline.com
 mobileimg.priceline.com
-monitor.flyiin.com
 msim.dohop.flyiin.com
 msim.flyiin.flyiin.com
 msim.praetorian.flyiin.com
@@ -8141,7 +8135,6 @@ test.h.priceline.com
 test.links.priceline.com
 tickets.a1.qa.priceline.com
 tickets.priceline.com
-track.flyiin.com
 track.ifnyop.priceline.com
 travel.getaroom.com
 travel.priceline.com
