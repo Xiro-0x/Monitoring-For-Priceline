@@ -1,4 +1,5 @@
 119.41-240.priceline.com
+13644936.travel.priceline.com
 1psb.priceline.com
 2fwww.priceline.com
 5l6swdqe1ly.priceline.com
@@ -8019,6 +8020,7 @@ pcln13.corp.priceline.com
 pcln14.corp.priceline.com
 pcln17.corp.priceline.com
 pclnhub.corp.priceline.com
+penny-phone.qaa.priceline.com
 phantom.corp.priceline.com
 picme.priceline.com
 pkg-whitelabel.priceline.com
@@ -8089,6 +8091,7 @@ sales-ccp.priceline.com
 sandbox.ids.priceline.com
 sandbox.priceline.com
 sanity.getaroom.com
+sap.priceline.com
 sb.priceline.com
 sdk.pps.priceline.com
 search-integration1.getaroom.com
