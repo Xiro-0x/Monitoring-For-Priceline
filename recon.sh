@@ -1,24 +1,10 @@
 #!/bin/bash
 # ============================================================
-#  Bug Bounty Recon — MULTI-TARGET version
+#  Bug Bounty Recon — MULTI-TARGET & INTIGRITI COMPATIBLE
 #  Usage: bash recon.sh "<targets>" <output_dir> [wordlist]
-#    <targets> = single domain  →  fsr.ac.ma
-#                comma list     →  "priceline.com,getaroom.com"
-#                file path      →  ./targets.txt (one per line)
-#
-#  Env (optional):
-#    BUG_BOUNTY_HEADER — your HackerOne username. If set, every ACTIVE
-#                        tool sends  "X-Bug-Bounty: <value>"  (Priceline
-#                        REQUIRES this header or their WAF blocks you).
-#    MAX_FUZZ_HOSTS    — how many live hosts to ffuf (default 5)
-#
-#  Notes:
-#   - No `set -e`: a failing tool must NEVER kill the run
-#   - Every external tool wrapped with `timeout` + `|| true`
-#   - Always exits 0
 # ============================================================
 
-INPUT="${1:-fsr.ac.ma}"
+INPUT="${1:-parool.nl}"
 OUTPUT_DIR="${2:-./results}"
 WORDLIST="${3:-/usr/share/dirb/wordlists/common.txt}"
 MAX_FUZZ_HOSTS="${MAX_FUZZ_HOSTS:-5}"
@@ -55,14 +41,18 @@ TARGET_LABEL=$(paste -sd, "$TARGETS_FILE" 2>/dev/null || echo "$INPUT")
 # Combined regex matching ANY in-scope root: (^|\.)(a\.com|b\.com)$
 TRE_ALL=$(sed 's/\./\\./g' "$TARGETS_FILE" 2>/dev/null | paste -sd'|')
 
-# Per-tool header args (empty when no username configured)
+# Smart Header Handling (Supports HackerOne & Intigriti)
 HDR=()
 if [ -n "$BBH" ]; then
-    HDR=(-H "X-Bug-Bounty: $BBH")
+    if [[ "$BBH" == *":"* ]]; then
+        HDR=(-H "$BBH")
+    else
+        HDR=(-H "X-Intigriti-Username: $BBH")
+    fi
 fi
 
 echo "🎯 Targets ($N_TARGETS): $TARGET_LABEL"
-[ -n "$BBH" ] && echo "🪪 Header: X-Bug-Bounty: $BBH" || echo "⚠️  No BUG_BOUNTY_HEADER set"
+[ -n "$BBH" ] && echo "🪪 Header Configured: ${HDR[*]}" || echo "⚠️  No BUG_BOUNTY_HEADER set"
 echo "⏰ Started: $(date -u)"
 
 # ───────────────────────── PHASE 1: OSINT ─────────────────────────
@@ -130,12 +120,13 @@ while read -r ROOT; do
     touch "$OUTPUT_DIR/02_subdomains/${safe}_findomain.txt"
 done < "$TARGETS_FILE"
 
-# merge: per-domain results + crt.sh (ALL_OSINT) — crtsh was NOT merged in v1
+# Merge and apply Out-Of-Scope Filtering for Het Parool / DPG Media
 cat "$OUTPUT_DIR/02_subdomains"/*.txt "$OUTPUT_DIR/01_osint/ALL_OSINT.txt" 2>/dev/null | \
     tr 'A-Z' 'a-z' | tr -d '\r' | \
     sed 's/^\*\.//; s/\.$//; s/^\.//' | \
     grep -iE "(^|\.)(${TRE_ALL})$" | \
     grep -E '^[a-z0-9._-]+$' | \
+    grep -vE "abonnement\.parool\.nl" | \
     sort -u > "$OUTPUT_DIR/02_subdomains/ALL_SUBDOMAINS.txt" 2>/dev/null || true
 touch "$OUTPUT_DIR/02_subdomains/ALL_SUBDOMAINS.txt"
 
@@ -150,7 +141,7 @@ touch "$OUTPUT_DIR/03_live/ALL_LIVE.txt" "$OUTPUT_DIR/03_live/httpx_details.txt"
 if [ "$TOTAL_SUBS" -gt 0 ] && check_tool httpx; then
     timeout 1200 httpx -l "$OUTPUT_DIR/02_subdomains/ALL_SUBDOMAINS.txt" \
         "${HDR[@]}" \
-        -silent -nc -threads 60 -rl 150 -timeout 8 -retries 1 \
+        -silent -nc -threads 40 -rl 60 -timeout 8 -retries 1 \
         -status-code -title -tech-detect -ip \
         -o "$OUTPUT_DIR/03_live/httpx_details.txt" 2>/dev/null || true
 
@@ -162,7 +153,6 @@ touch "$OUTPUT_DIR/03_live/ALL_LIVE.txt"
 TOTAL_LIVE=$(count_lines "$OUTPUT_DIR/03_live/ALL_LIVE.txt")
 echo "  └─ Live: $TOTAL_LIVE"
 
-# Plain domains — waybackurls / gau / subjs need DOMAINS, not URLs
 sed 's|https\?://||; s|/.*||; s|:.*||' "$OUTPUT_DIR/03_live/ALL_LIVE.txt" 2>/dev/null | \
     sort -u > "$OUTPUT_DIR/03_live/LIVE_DOMAINS.txt" 2>/dev/null || true
 touch "$OUTPUT_DIR/03_live/LIVE_DOMAINS.txt"
@@ -208,7 +198,7 @@ if [ "$TOTAL_LIVE" -gt 0 ]; then
     if check_tool katana; then
         timeout 900 katana -list "$OUTPUT_DIR/03_live/ALL_LIVE.txt" \
             "${HDR[@]}" \
-            -silent -nc -jc -d 2 -c 15 -rl 30 -timeout 10 \
+            -silent -nc -jc -d 2 -c 15 -rl 20 -timeout 10 \
             -o "$OUTPUT_DIR/05_params/katana.txt" 2>/dev/null || true
     fi
 
@@ -252,13 +242,13 @@ if [ "$TOTAL_LIVE" -gt 0 ]; then
                 "${HDR[@]}" \
                 -e ".php,.html,.txt,.bak,.json,.env,.zip" \
                 -mc 200,204,301,302,307,401,403 \
-                -t 40 -rate 150 -timeout 8 -ac -s \
+                -t 20 -rate 30 -timeout 8 -ac -s \
                 -o "$OUTPUT_DIR/06_files/ffuf/ffuf_${domain}.json" 2>/dev/null || true
 
             timeout 420 ffuf -u "${url%/}/FUZZ/" -w "$TRIM_LIST":FUZZ \
                 "${HDR[@]}" \
                 -mc 200,204,301,302,307,401,403 \
-                -t 40 -rate 150 -timeout 8 -ac -s \
+                -t 20 -rate 30 -timeout 8 -ac -s \
                 -o "$OUTPUT_DIR/06_files/ffuf/dirs_${domain}.json" 2>/dev/null || true
         done
     else
@@ -316,7 +306,6 @@ if [ "$TOTAL_LIVE" -gt 0 ]; then
     fi
 
     if check_tool nuclei; then
-        # nuclei-templates moved under http/ in recent versions — auto-detect both layouts
         NT="$HOME/nuclei-templates"
         TECH_T="$NT/http/technologies"; [ -d "$TECH_T" ] || TECH_T="$NT/technologies"
         EXP_T="$NT/http/exposures";     [ -d "$EXP_T" ]  || EXP_T="$NT/exposures"
@@ -324,12 +313,12 @@ if [ "$TOTAL_LIVE" -gt 0 ]; then
         if [ -d "$TECH_T" ]; then
             timeout 1200 nuclei -l "$OUTPUT_DIR/03_live/ALL_LIVE.txt" \
                 "${HDR[@]}" -t "$TECH_T" \
-                -silent -nc -rl 30 -c 25 -timeout 5 -retries 1 \
+                -silent -nc -rl 20 -c 15 -timeout 5 -retries 1 \
                 -o "$OUTPUT_DIR/07_fingerprint/nuclei_tech.txt" 2>/dev/null || true
         else
             timeout 1200 nuclei -l "$OUTPUT_DIR/03_live/ALL_LIVE.txt" \
                 "${HDR[@]}" -tags tech \
-                -silent -nc -rl 30 -c 25 -timeout 5 -retries 1 \
+                -silent -nc -rl 20 -c 15 -timeout 5 -retries 1 \
                 -o "$OUTPUT_DIR/07_fingerprint/nuclei_tech.txt" 2>/dev/null || true
         fi
 
@@ -337,13 +326,13 @@ if [ "$TOTAL_LIVE" -gt 0 ]; then
             timeout 1200 nuclei -l "$OUTPUT_DIR/03_live/ALL_LIVE.txt" \
                 "${HDR[@]}" -t "$EXP_T" \
                 -severity critical,high,medium \
-                -silent -nc -rl 30 -c 25 -timeout 5 -retries 1 \
+                -silent -nc -rl 20 -c 15 -timeout 5 -retries 1 \
                 -o "$OUTPUT_DIR/07_fingerprint/nuclei_exposures.txt" 2>/dev/null || true
         else
             timeout 1200 nuclei -l "$OUTPUT_DIR/03_live/ALL_LIVE.txt" \
                 "${HDR[@]}" -tags exposure,config,token,keys \
                 -severity critical,high,medium \
-                -silent -nc -rl 30 -c 25 -timeout 5 -retries 1 \
+                -silent -nc -rl 20 -c 15 -timeout 5 -retries 1 \
                 -o "$OUTPUT_DIR/07_fingerprint/nuclei_exposures.txt" 2>/dev/null || true
         fi
     fi
@@ -359,7 +348,7 @@ cat > "$OUTPUT_DIR/FINAL_REPORT.txt" << EOF
 ================================================================================
     BUG BOUNTY RECON REPORT
     Targets: $TARGET_LABEL
-    Header: ${BBH:-none}
+    Header: ${HDR[*]:-none}
     Time: $(date -u)
 ================================================================================
 [SUMMARY]
