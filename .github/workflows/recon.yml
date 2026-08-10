@@ -1,4 +1,4 @@
-name: 🐛 Priceline H1 Recon — Every 10 Hours
+name: 🐛 DPG Media (Het Parool) Intigriti Recon — Every 10 Hours
 
 on:
   workflow_dispatch:
@@ -13,12 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Comma-separated root domains of the Priceline H1 scope.
-  # Override via a TARGETS repo secret if the scope changes.
-  TARGETS: ${{ secrets.TARGETS || 'priceline.com,getaroom.com,flyiin.com,bookingholdings.com,bookingholdings-coe.com' }}
-  # Your HackerOne username — Priceline REQUIRES the X-Bug-Bounty header
-  # on active requests or their WAF blocks you.
-  H1_USER: ${{ secrets.H1_USERNAME || 'xiro0x_1' }}
+  # Target domains for Het Parool / DPG Media (Intigriti)
+  TARGETS: ${{ secrets.TARGETS || 'parool.nl' }}
+  # Intigriti Username — REQUIRED by Intigriti / DPG Media rules
+  INTIGRITI_USER: ${{ secrets.INTIGRITI_USERNAME || 'grandsonofhannibal' }}
   OUTPUT_DIR: ./results
 
 jobs:
@@ -68,7 +66,7 @@ jobs:
             go install "$2" || echo "FAILED (non-fatal): $1"
           }
 
-          gi subfinder  github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+          gi subfinder   github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           gi assetfinder github.com/tomnomnom/assetfinder@latest
           gi waybackurls github.com/tomnomnom/waybackurls@latest
           gi httpx      github.com/projectdiscovery/httpx/cmd/httpx@latest
@@ -79,7 +77,6 @@ jobs:
           gi subjs      github.com/lc/subjs@latest
           gi nuclei     github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
-          # findomain is RUST — go install can never work; use the prebuilt binary
           if ! command -v findomain >/dev/null 2>&1; then
             curl -sL --max-time 120 \
               https://github.com/findomain/findomain/releases/latest/download/findomain-linux.zip \
@@ -110,7 +107,6 @@ jobs:
           virustotal: ["${{ secrets.VIRUSTOTAL_API_KEY }}"]
           EOF
 
-      # Verify the webhook BEFORE the long run
       - name: 🔔 Test Discord Webhook
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -122,18 +118,19 @@ jobs:
           echo "Webhook secret present (length: ${#WEBHOOK} chars)"
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
             -H "Content-Type: application/json" \
-            -d "{\"content\": \"🚀 Priceline H1 Recon **started** — run #${{ github.run_number }}\nTargets: \`$TARGETS\`\"}" \
+            -d "{\"content\": \"🚀 DPG Media (Het Parool) Recon **started** — run #${{ github.run_number }}\nTargets: \`$TARGETS\`\nResearcher: \`$INTIGRITI_USER\`\"}" \
             "$WEBHOOK")
           echo "Discord test HTTP code: $code"
           if [ "$code" != "200" ] && [ "$code" != "204" ]; then
-            echo "❌ Webhook rejected (HTTP $code) — it is invalid or was deleted. ROTATE it!"
+            echo "❌ Webhook rejected (HTTP $code) — it is invalid or was deleted."
           else
-            echo "✅ Webhook works — check Discord for the '🚀 started' message"
+            echo "✅ Webhook works"
           fi
 
       - name: 🚀 Run Recon
         env:
-          BUG_BOUNTY_HEADER: ${{ secrets.H1_USERNAME || 'xiro0x_1' }}
+          # Intigriti Header for active probing
+          BUG_BOUNTY_HEADER: "X-Intigriti-Username: ${{ secrets.INTIGRITI_USERNAME || 'grandsonofhannibal' }}"
         run: |
           export PATH="$HOME/go/bin:$PATH"
           mkdir -p "$OUTPUT_DIR"
@@ -143,24 +140,15 @@ jobs:
           echo "TARGETS = [$TARGETS]"
           echo "BUG_BOUNTY_HEADER = [$BUG_BOUNTY_HEADER]"
 
-          echo "=== TOOL CHECK ==="
-          for t in subfinder assetfinder findomain waybackurls gau httpx katana ffuf gf subjs nuclei wafw00f jq theHarvester; do
-            command -v "$t" >/dev/null 2>&1 && echo "OK   $t" || echo "MISS $t"
-          done
-
           if [ ! -s recon.sh ]; then
             echo "❌❌ recon.sh is MISSING or EMPTY in the repository root!"
-            ls -la
             cat > "$OUTPUT_DIR/FINAL_REPORT.txt" << EOF
           RECON FAILED ❌
           recon.sh was not found (or is empty) in the repository root.
           Targets: $TARGETS
-          Fix: file must be named exactly "recon.sh" in the repo ROOT
-          (NOT inside .github/), next to notify.py.
           EOF
             exit 1
           fi
-          echo "recon.sh present: $(wc -l < recon.sh) lines"
 
           WORDLIST=/usr/share/dirb/wordlists/common.txt
           if [ ! -f "$WORDLIST" ]; then
@@ -169,7 +157,6 @@ jobs:
               -o /tmp/common.txt || true
             [ -s /tmp/common.txt ] && WORDLIST=/tmp/common.txt
           fi
-          echo "Wordlist: $WORDLIST ($(wc -l < "$WORDLIST" 2>/dev/null || echo 0) words)"
 
           chmod +x recon.sh || true
           bash ./recon.sh "$TARGETS" "$OUTPUT_DIR" "$WORDLIST" 2>&1 | tee recon.log
@@ -191,7 +178,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: priceline-recon-${{ github.run_number }}
+          name: dpg-parool-recon-${{ github.run_number }}
           path: |
             ./results/
             ./recon.log
@@ -204,20 +191,15 @@ jobs:
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          echo "notify.py exists: $([ -f notify.py ] && echo yes || echo NO)"
-          echo "webhook length: ${#WEBHOOK}"
-          ls -la "$OUTPUT_DIR" 2>/dev/null || echo "(no results dir)"
           if [ -f notify.py ] && [ -n "$WEBHOOK" ]; then
             python3 notify.py \
               --webhook "$WEBHOOK" \
-              --target "Priceline H1" \
+              --target "DPG Media (Het Parool)" \
               --output "$OUTPUT_DIR" \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
               --status "${{ job.status }}" \
               --report "$OUTPUT_DIR/FINAL_REPORT.txt" \
               2>&1 | tee notify.log || echo "Discord notify failed but continuing"
-          else
-            echo "❌ SKIPPED: notify.py missing or DISCORD_WEBHOOK_URL empty"
           fi
 
       - name: 💾 Save State
@@ -235,6 +217,4 @@ jobs:
             git commit -m "🤖 Update recon state [skip ci]" || true
             git pull --rebase origin "${{ github.ref_name }}" 2>/dev/null || true
             git push origin HEAD 2>/dev/null || true
-          else
-            echo "No state changes"
           fi
